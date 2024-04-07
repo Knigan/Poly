@@ -55,7 +55,7 @@ class Poly:
                                       
     
     def __repr__(self):
-        return self.__str__()
+        return str(self)
     
     def __add__(self, other):
         d = self.P
