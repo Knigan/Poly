@@ -2,8 +2,9 @@ class Poly:
     def __init__(self, L: list):
         if isinstance(L, dict):
             self.P = dict(sorted(L.items()))
+            self.P = {key: value for key, value in self.P.items() if self.P[key] != 0}
         elif isinstance(L, list):
-            self.P = {n: L[n] for n in range(len(L))}
+            self.P = {n: L[n] for n in range(len(L)) if L[n] != 0}
         else:
             raise TypeError("Переменная L должна быть списком или словарём")
     
@@ -99,7 +100,7 @@ class Poly:
                 if i in d:
                     d[i] -= other.P[i]
                 else:
-                    d[i] = other.P[i]
+                    d[i] = -other.P[i]
         else:
             raise TypeError("Вы можете вычитать из полиномов только числа или другие полиномы")
         
@@ -163,44 +164,22 @@ class Poly:
         elif isinstance(other, Poly):
             if len(other.P) == 0:
                 raise ValueError("Деление на ноль невозможно!")
-            flag = True
-            for i in other.P:
-                if other.P[i] != 0:
-                    flag = False
-                    break
-            if flag:
-                raise ValueError("Деление на ноль невозможно!")
+
+            if len(self.P) == 0:
+                return Poly([])
 
             if list(other.P.keys())[-1] > list(self.P.keys())[-1]:
                 return Poly([])
             elif list(other.P.keys())[-1] == list(self.P.keys())[-1]:
                 return Poly([self.P[list(self.P.keys())[-1]] / other.P[list(other.P.keys())[-1]]])
             else:
-                l = min(len(self.P.keys()), len(other.P.keys()))
-                buffer = {}
-                temp = Poly(self.P)
-                k = 1
-                for i in range(1, l + 1):
-                    deg = list(self.P.keys())[-i] - list(other.P.keys())[-k]
-
-                    while deg < 0:
-                        k += 1
-                        if k <= l:
-                            deg = list(self.P.keys())[-i] - list(other.P.keys())[-k]
-                        else:
-                            break
-                    
-                    if k > l:
-                        break
-
-                    buffer[deg] = temp.P[list(temp.P.keys())[-i]] / other.P[list(other.P.keys())[-k]]
-                    if deg != 0:
-                        temp = temp - other * Poly({deg: buffer[deg]})
-                    else:
-                        break
-                    
-                
-                return Poly(buffer)
+                deg = list(self.P.keys())[-1] - list(other.P.keys())[-1]
+                value = list(self.P.values())[-1] / list(other.P.values())[-1]
+                temp = Poly({deg: value})
+                if temp == Poly([]):
+                    return 0
+                else:
+                    return temp + (self - other * temp) / other
         else:
             raise TypeError("Вы можете делить полином только на числа или другие полиномы")
     
@@ -240,10 +219,13 @@ class Poly:
         else:
             p0 = Poly({list(self.P.keys())[0]: list(self.P.values())[0]})
             p1 = Poly({list(self.P.keys())[i]: list(self.P.values())[i] for i in range(1, len(self.P))})
-            S = 0
-            for k in range(n + 1):
-                S += factorial(n) / (factorial(k) * factorial(n - k)) * p1 ** (n - k) * p0 ** k
-            return S
+            if p1 == Poly([]):
+                return p0 ** n
+            else:
+                S = 0
+                for k in range(n + 1):
+                    S += factorial(n) / (factorial(k) * factorial(n - k)) * p1 ** (n - k) * p0 ** k
+                return S
     
     def __eq__(self, other):
         if len(self.P) != len(other.P):
@@ -296,10 +278,20 @@ class Poly:
 
 
 if __name__ == "__main__":
-    d1 = {0: 1, 1: 2, 2: 3}
-    d2 = {0: 1, 1: 2, 2: 1}
-    a = Poly(d1)
-    b = Poly(d2)
-    c = Poly(a.P)
-    a.P = {}
-    print(c)
+    d1 = {0: 1, 1: 1}
+    d2 = {0: 1, 1: -1}
+    p1 = Poly(d1)
+    p2 = Poly(d2)
+    
+    a = Poly([0, 1, 2, 3]) ** 10
+    b = Poly([0, 1, 2, 3]) ** 9
+    print("a:", a)
+    print("b:", b)
+    print("a / b =", a / b)
+    firstTest = (p1 * p2) ** 2 - p1 ** 2 * p2 ** 2
+    secondTest = (p1 ** 10 + 1) % p1
+    thirdTest = Poly({0: -1, 10: 1}) % Poly({0: -1, 1: 1})
+
+    print("firstTest:", firstTest)
+    print("secondTest:", secondTest)
+    print("thirdTest:", thirdTest)
