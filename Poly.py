@@ -174,7 +174,7 @@ class Poly:
             if list(other.P.keys())[-1] > list(self.P.keys())[-1]:
                 return Poly([])
             elif list(other.P.keys())[-1] == list(self.P.keys())[-1]:
-                return Poly([self.P[self.P.keys()[-1]] / other.P[other.P.keys()[-1]]])
+                return Poly([self.P[list(self.P.keys())[-1]] / other.P[list(other.P.keys())[-1]]])
             else:
                 l = min(len(self.P.keys()), len(other.P.keys()))
                 buffer = {}
@@ -270,7 +270,7 @@ class Poly:
         if num == 0:
             return self
         
-        temp = self.P
+        temp = self.P.copy()
         for _ in range(num):
             temp2 = {}
             for i in temp:
@@ -300,6 +300,6 @@ if __name__ == "__main__":
     d2 = {0: 1, 1: 2, 2: 1}
     a = Poly(d1)
     b = Poly(d2)
-    print(a)
-    d1 = {0: 0, 1: 1, 2: 2}
-    print(a)
+    c = Poly(a.P)
+    a.P = {}
+    print(c)
