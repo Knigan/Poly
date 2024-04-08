@@ -58,7 +58,7 @@ class Poly:
         return str(self)
     
     def __add__(self, other):
-        d = self.P
+        d = self.P.copy()
         if isinstance(other, int) or isinstance(other, float):
             if 0 in d:
                 d[0] += other
@@ -76,7 +76,7 @@ class Poly:
         return Poly(d)
     
     def __radd__(self, other):
-        d = self.P
+        d = self.P.copy()
         if isinstance(other, int) or isinstance(other, float):
             if 0 in d:
                 d[0] += other
@@ -88,7 +88,7 @@ class Poly:
         return Poly(d)        
 
     def __sub__(self, other):
-        d = self.P
+        d = self.P.copy()
         if isinstance(other, int) or isinstance(other, float):
             if 0 in d:
                 d[0] -= other
@@ -106,7 +106,7 @@ class Poly:
         return Poly(d)
     
     def __rsub__(self, other):
-        d = self.P
+        d = self.P.copy()
         if isinstance(other, int) or isinstance(other, float):
             for i in d:
                 d[i] = -d[i]
@@ -123,7 +123,7 @@ class Poly:
     def __mul__(self, other):
         d = {}
         if isinstance(other, int) or isinstance(other, float):
-            d = self.P
+            d = self.P.copy()
             for i in d:
                 d[i] *= other
         elif isinstance(other, Poly):
@@ -142,7 +142,7 @@ class Poly:
         return Poly(d)
     
     def __rmul__(self, other):
-        d = self.P
+        d = self.P.copy()
         if isinstance(other, int) or isinstance(other, float):
             for i in d:
                 d[i] *= other
@@ -155,7 +155,7 @@ class Poly:
         if isinstance(other, int) or isinstance(other, float):
             if other == 0:
                 raise ValueError("Деление на ноль невозможно!")
-            d = self.P
+            d = self.P.copy()
             for i in d:
                 d[i] /= other
             
@@ -300,4 +300,6 @@ if __name__ == "__main__":
     d2 = {0: 1, 1: 2, 2: 1}
     a = Poly(d1)
     b = Poly(d2)
-    print((a ** 10) / (a ** 9))
+    print(a)
+    d1 = {0: 0, 1: 1, 2: 2}
+    print(a)
